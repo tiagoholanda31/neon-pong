@@ -339,6 +339,16 @@ let particles = [];
 const input = { up: false, down: false, y: null, launch: false };
 const input2 = { up: false, down: false, launch: false };
 
+// --- Touch Device Detection ---
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+const touchControls = document.getElementById('touchControls');
+const touchServeBtn = document.getElementById('touchServeBtn');
+const touchP1Up = document.getElementById('touchP1Up');
+const touchP1Down = document.getElementById('touchP1Down');
+const touchP2Up = document.getElementById('touchP2Up');
+const touchP2Down = document.getElementById('touchP2Down');
+const touchZoneRight = document.getElementById('touchZoneRight');
+
 function resize() {
     canvas.width = CONFIG.canvasWidth;
     canvas.height = CONFIG.canvasHeight;
@@ -510,6 +520,16 @@ function startServe(server) {
         ball.attachToPaddle(ai, -1);
     }
 
+    // Show touch serve button on mobile
+    if (isTouchDevice) {
+        // Show serve button if it's the player's turn, or P2 in 2P mode
+        if (server === 'player' || (server === 'ai' && state.twoPlayer)) {
+            touchServeBtn.classList.remove('hidden');
+        } else {
+            touchServeBtn.classList.add('hidden');
+        }
+    }
+
     // AI auto-serve in 1P mode
     if (server === 'ai' && !state.twoPlayer) {
         if (state.aiServeTimer) clearTimeout(state.aiServeTimer);
@@ -530,6 +550,10 @@ function doServe() {
     if (state.aiServeTimer) {
         clearTimeout(state.aiServeTimer);
         state.aiServeTimer = null;
+    }
+    // Hide touch serve button
+    if (isTouchDevice) {
+        touchServeBtn.classList.add('hidden');
     }
 }
 
@@ -583,7 +607,16 @@ function startGame(twoPlayer) {
 
     state.running = true;
 
-    state.running = true;
+    // Show touch controls on mobile
+    if (isTouchDevice) {
+        touchControls.classList.remove('hidden');
+        // In 1P mode, hide P2 touch zone
+        if (!twoPlayer) {
+            touchZoneRight.classList.add('hidden');
+        } else {
+            touchZoneRight.classList.remove('hidden');
+        }
+    }
 
     // Start the timer
     initTimer(); // Reset timer to full duration
@@ -650,6 +683,12 @@ function resetToMenu() {
     selectedMode = null;
     if (timerEl) timerEl.textContent = formatTime(CONFIG.gameDuration);
     if (timerEl) timerEl.classList.remove('timer-warning');
+
+    // Hide touch controls
+    if (isTouchDevice) {
+        touchControls.classList.add('hidden');
+        touchServeBtn.classList.add('hidden');
+    }
 }
 
 // --- Loop ---
@@ -973,6 +1012,102 @@ canvas.addEventListener('mousemove', (e) => {
     const scaleY = canvas.height / rect.height;
     input.y = (e.clientY - rect.top) * scaleY;
 });
+
+// --- Touch Controls Event Listeners ---
+if (isTouchDevice) {
+    // Prevent default touch behaviors to avoid scrolling/zooming
+    document.addEventListener('touchmove', (e) => {
+        if (e.target.closest('.touch-arrow, .touch-serve-btn, .touch-zone')) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Player 1 - Up
+    touchP1Up.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        input.up = true;
+        input.y = null;
+        touchP1Up.classList.add('active');
+    }, { passive: false });
+    touchP1Up.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        input.up = false;
+        touchP1Up.classList.remove('active');
+    }, { passive: false });
+    touchP1Up.addEventListener('touchcancel', () => {
+        input.up = false;
+        touchP1Up.classList.remove('active');
+    });
+
+    // Player 1 - Down
+    touchP1Down.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        input.down = true;
+        input.y = null;
+        touchP1Down.classList.add('active');
+    }, { passive: false });
+    touchP1Down.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        input.down = false;
+        touchP1Down.classList.remove('active');
+    }, { passive: false });
+    touchP1Down.addEventListener('touchcancel', () => {
+        input.down = false;
+        touchP1Down.classList.remove('active');
+    });
+
+    // Player 2 - Up
+    touchP2Up.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        input2.up = true;
+        touchP2Up.classList.add('active');
+    }, { passive: false });
+    touchP2Up.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        input2.up = false;
+        touchP2Up.classList.remove('active');
+    }, { passive: false });
+    touchP2Up.addEventListener('touchcancel', () => {
+        input2.up = false;
+        touchP2Up.classList.remove('active');
+    });
+
+    // Player 2 - Down
+    touchP2Down.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        input2.down = true;
+        touchP2Down.classList.add('active');
+    }, { passive: false });
+    touchP2Down.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        input2.down = false;
+        touchP2Down.classList.remove('active');
+    }, { passive: false });
+    touchP2Down.addEventListener('touchcancel', () => {
+        input2.down = false;
+        touchP2Down.classList.remove('active');
+    });
+
+    // Serve Button
+    touchServeBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (state.serving) {
+            if (state.server === 'player') {
+                input.launch = true;
+            } else if (state.server === 'ai' && state.twoPlayer) {
+                input2.launch = true;
+            }
+        }
+    }, { passive: false });
+
+    // Game-over tap to return to menu
+    gameOverScreen.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (state.gameOver) {
+            resetToMenu();
+        }
+    }, { passive: false });
+}
 
 // Start
 resize();

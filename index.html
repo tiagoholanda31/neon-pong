@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Neon Pong</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -77,15 +77,36 @@
 
             <div id="gameOverScreen" class="overlay hidden">
                 <h2 id="winnerText">PLAYER WINS</h2>
-                <p>Pressione <span class="key">SPACE</span> para voltar ao menu</p>
+                <p class="game-over-hint">Pressione <span class="key">SPACE</span> ou toque na tela para voltar ao menu</p>
             </div>
         </div>
         <canvas id="gameCanvas"></canvas>
 
+        <!-- Touch Controls -->
+        <div id="touchControls" class="touch-controls hidden">
+            <div class="touch-zone touch-zone-left" id="touchZoneLeft">
+                <div class="touch-arrow touch-up" id="touchP1Up">▲</div>
+                <div class="touch-label">P1</div>
+                <div class="touch-arrow touch-down" id="touchP1Down">▼</div>
+            </div>
+            <div class="touch-zone touch-zone-right" id="touchZoneRight">
+                <div class="touch-arrow touch-up" id="touchP2Up">▲</div>
+                <div class="touch-label">P2</div>
+                <div class="touch-arrow touch-down" id="touchP2Down">▼</div>
+            </div>
+        </div>
+        <button id="touchServeBtn" class="touch-serve-btn hidden">SAQUE ⚡</button>
+
+        <!-- Portrait Rotate Message -->
+        <div id="rotateMessage" class="rotate-message">
+            <div class="rotate-icon">📱🔄</div>
+            <p>Gire o celular para jogar</p>
+        </div>
+
         <!-- Intro Overlay -->
         <div id="introOverlay" class="intro-overlay">
             <h1 class="intro-title">NEON PONG</h1>
-            <p class="intro-subtitle">Clique na TELA para Iniciar</p>
+            <p class="intro-subtitle">Toque na TELA para Iniciar</p>
         </div>
     </div>
 

@@ -633,3 +633,321 @@ canvas {
         opacity: 1;
     }
 }
+
+/* =============================================
+   TOUCH CONTROLS & MOBILE RESPONSIVENESS
+   ============================================= */
+
+/* --- Touch Control Zones --- */
+.touch-controls {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.touch-zone {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.touch-zone-left {
+    left: 0;
+}
+
+.touch-zone-right {
+    right: 0;
+}
+
+.touch-arrow {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+}
+
+.touch-zone-left .touch-arrow {
+    border-color: rgba(0, 243, 255, 0.3);
+    color: rgba(0, 243, 255, 0.6);
+}
+
+.touch-zone-right .touch-arrow {
+    border-color: rgba(255, 0, 255, 0.3);
+    color: rgba(255, 0, 255, 0.6);
+}
+
+.touch-arrow.active {
+    transform: scale(1.1);
+}
+
+.touch-zone-left .touch-arrow.active {
+    background: rgba(0, 243, 255, 0.2);
+    border-color: var(--neon-blue);
+    color: var(--neon-blue);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+}
+
+.touch-zone-right .touch-arrow.active {
+    background: rgba(255, 0, 255, 0.2);
+    border-color: var(--neon-pink);
+    color: var(--neon-pink);
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
+}
+
+.touch-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+}
+
+/* --- Touch Serve Button --- */
+.touch-serve-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 14px 36px;
+    border: 2px solid #ffd700;
+    border-radius: 30px;
+    background: rgba(255, 215, 0, 0.1);
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    z-index: 60;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+    animation: servePulse 1.2s ease-in-out infinite;
+}
+
+.touch-serve-btn:active {
+    transform: translateX(-50%) scale(0.95);
+    background: rgba(255, 215, 0, 0.25);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+}
+
+@keyframes servePulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 60px rgba(255, 215, 0, 0.2);
+    }
+}
+
+/* --- Portrait Rotate Message --- */
+.rotate-message {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 2000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.rotate-icon {
+    font-size: 4rem;
+    animation: rotateHint 2s ease-in-out infinite;
+}
+
+@keyframes rotateHint {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(15deg);
+    }
+
+    75% {
+        transform: rotate(-15deg);
+    }
+}
+
+.rotate-message p {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.1em;
+    text-align: center;
+}
+
+/* =============================================
+   MOBILE LANDSCAPE MEDIA QUERIES
+   ============================================= */
+@media screen and (max-width: 900px) and (orientation: landscape),
+screen and (max-height: 500px) {
+
+    .title {
+        display: none;
+    }
+
+    .score-board {
+        top: 5%;
+        gap: 15px;
+        font-size: 1.8rem;
+    }
+
+    .timer {
+        font-size: 0.9rem;
+        min-width: 50px;
+    }
+
+    .menu-btn {
+        top: 8px;
+        left: 8px;
+        padding: 6px 12px;
+        font-size: 10px;
+    }
+
+    .mute-btn {
+        top: 8px;
+        left: auto;
+        right: 8px;
+        padding: 6px 12px;
+        font-size: 0.7rem;
+    }
+
+    /* Mode selection screen */
+    .mode-title {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+    }
+
+    .start-screen-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        width: 90%;
+        margin-top: 0.5rem;
+    }
+
+    .mode-column {
+        gap: 0.8rem;
+    }
+
+    .mode-btn {
+        font-size: 0.85rem;
+        padding: 10px 24px;
+    }
+
+    .control-group p {
+        font-size: 0.7rem;
+        margin: 2px 0;
+    }
+
+    .start-screen-grid h4 {
+        font-size: 0.85rem;
+        margin-bottom: 3px;
+    }
+
+    /* Overlays */
+    .overlay p,
+    .overlay h2 {
+        font-size: 1rem;
+    }
+
+    .overlay h2 {
+        font-size: 1.8rem;
+    }
+
+    /* Countdown / Coin Flip */
+    .countdown-text {
+        font-size: 4rem;
+    }
+
+    .coin-flip-text {
+        font-size: 1rem;
+    }
+
+    /* Pause Menu */
+    .pause-content {
+        width: 300px;
+        padding: 25px;
+    }
+
+    .pause-title {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .pause-buttons {
+        gap: 12px;
+    }
+
+    /* Intro */
+    .intro-title {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .intro-subtitle {
+        font-size: 1rem;
+    }
+
+    /* Canvas */
+    canvas {
+        border-width: 1px;
+    }
+}
+
+/* =============================================
+   PORTRAIT ORIENTATION (show rotate message)
+   ============================================= */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    .rotate-message {
+        display: flex;
+    }
+
+    .game-container {
+        display: none;
+    }
+}
+
+/* =============================================
+   HIDE TOUCH CONTROLS ON DESKTOP
+   ============================================= */
+@media (hover: hover) and (pointer: fine) {
+
+    .touch-controls,
+    .touch-serve-btn,
+    .rotate-message {
+        display: none !important;
+    }
+}
