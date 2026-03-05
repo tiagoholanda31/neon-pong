@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Pong</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="ui-layer">
+            <h1 class="title">NEON PONG</h1>
+            <div class="score-board">
+                <div class="score" id="playerScore">0</div>
+                <div class="timer" id="timerDisplay">3:00</div>
+                <div class="score" id="aiScore">0</div>
+            </div>
+
+            <button id="menuButton" class="menu-btn">MENU</button>
+            <button id="muteBtn" class="mute-btn">SOM: ON 🔊</button>
+
+            <!-- Mode Selection Screen -->
+            <div id="modeScreen" class="overlay">
+                <h1 class="mode-title">NEON PONG</h1>
+                <div class="start-screen-grid">
+                    <!-- Column 1: Player 1 -->
+                    <div class="mode-column">
+                        <button id="btn1P" class="mode-btn btn-1p">1 JOGADOR</button>
+                        <div class="control-group player1">
+                            <h4>Player 1</h4>
+                            <p><strong>W / S</strong> : Cima / Baixo</p>
+                            <p><strong>W ou Espaço</strong> : Saque</p>
+                            <p><strong>Mouse</strong> : Cima / Baixo</p>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Player 2 -->
+                    <div class="mode-column">
+                        <button id="btn2P" class="mode-btn btn-2p">2 JOGADORES</button>
+                        <div class="control-group player2">
+                            <h4>Player 2</h4>
+                            <p><strong>P / Ç</strong> : Cima / Baixo</p>
+                            <p><strong>P</strong> : Saque</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="coinButton" class="coin-container hidden">
+                    <p class="coin-prompt">Clique na moeda...</p>
+                    <div class="coin neon-coin">
+                        <div class="coin-face">?</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pause Menu Overlay -->
+            <div id="pauseMenu" class="overlay hidden">
+                <div class="pause-content">
+                    <h2 class="pause-title">PAUSADO</h2>
+                    <div class="pause-buttons">
+                        <button id="btnResume" class="mode-btn btn-resume">CONTINUAR</button>
+                        <button id="btnQuit" class="mode-btn btn-quit">MENU PRINCIPAL</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Countdown / Coin Flip Overlay -->
+            <div id="countdownOverlay" class="overlay hidden">
+                <div id="countdownText" class="countdown-text">3</div>
+                <div id="coinFlipText" class="coin-flip-text"></div>
+            </div>
+
+            <div id="gameOverScreen" class="overlay hidden">
+                <h2 id="winnerText">PLAYER WINS</h2>
+                <p>Pressione <span class="key">SPACE</span> para voltar ao menu</p>
+            </div>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Intro Overlay -->
+        <div id="introOverlay" class="intro-overlay">
+            <h1 class="intro-title">NEON PONG</h1>
+            <p class="intro-subtitle">Clique na TELA para Iniciar</p>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="sound/Midnight Neon Drive.mp3" type="audio/mpeg">
+    </audio>
+    <script src="main.js"></script>
+</body>
+
+</html>
