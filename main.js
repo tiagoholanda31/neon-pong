@@ -341,13 +341,6 @@ const input2 = { up: false, down: false, launch: false };
 
 // --- Touch Device Detection ---
 const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-const touchControls = document.getElementById('touchControls');
-const touchServeBtn = document.getElementById('touchServeBtn');
-const touchP1Up = document.getElementById('touchP1Up');
-const touchP1Down = document.getElementById('touchP1Down');
-const touchP2Up = document.getElementById('touchP2Up');
-const touchP2Down = document.getElementById('touchP2Down');
-const touchZoneRight = document.getElementById('touchZoneRight');
 
 function resize() {
     canvas.width = CONFIG.canvasWidth;
@@ -520,16 +513,6 @@ function startServe(server) {
         ball.attachToPaddle(ai, -1);
     }
 
-    // Show touch serve button on mobile
-    if (isTouchDevice) {
-        // Show serve button if it's the player's turn, or P2 in 2P mode
-        if (server === 'player' || (server === 'ai' && state.twoPlayer)) {
-            touchServeBtn.classList.remove('hidden');
-        } else {
-            touchServeBtn.classList.add('hidden');
-        }
-    }
-
     // AI auto-serve in 1P mode
     if (server === 'ai' && !state.twoPlayer) {
         if (state.aiServeTimer) clearTimeout(state.aiServeTimer);
@@ -550,10 +533,6 @@ function doServe() {
     if (state.aiServeTimer) {
         clearTimeout(state.aiServeTimer);
         state.aiServeTimer = null;
-    }
-    // Hide touch serve button
-    if (isTouchDevice) {
-        touchServeBtn.classList.add('hidden');
     }
 }
 
@@ -606,17 +585,6 @@ function startGame(twoPlayer) {
     ai.pos.y = canvas.height / 2 - CONFIG.paddleHeight / 2;
 
     state.running = true;
-
-    // Show touch controls on mobile
-    if (isTouchDevice) {
-        touchControls.classList.remove('hidden');
-        // In 1P mode, hide P2 touch zone
-        if (!twoPlayer) {
-            touchZoneRight.classList.add('hidden');
-        } else {
-            touchZoneRight.classList.remove('hidden');
-        }
-    }
 
     // Start the timer
     initTimer(); // Reset timer to full duration
@@ -683,12 +651,6 @@ function resetToMenu() {
     selectedMode = null;
     if (timerEl) timerEl.textContent = formatTime(CONFIG.gameDuration);
     if (timerEl) timerEl.classList.remove('timer-warning');
-
-    // Hide touch controls
-    if (isTouchDevice) {
-        touchControls.classList.add('hidden');
-        touchServeBtn.classList.add('hidden');
-    }
 }
 
 // --- Loop ---
@@ -864,12 +826,14 @@ function draw() {
             ctx.fillStyle = CONFIG.colors.player;
             ctx.shadowColor = CONFIG.colors.player;
             ctx.shadowBlur = 10;
-            ctx.fillText('Pressione W para sacar!', canvas.width / 4, 40);
+            const text = isTouchDevice ? 'Toque na tela para sacar!' : 'Pressione W para sacar!';
+            ctx.fillText(text, canvas.width / 4, 40);
         } else if (state.server === 'ai' && state.twoPlayer) {
             ctx.fillStyle = CONFIG.colors.ai;
             ctx.shadowColor = CONFIG.colors.ai;
             ctx.shadowBlur = 10;
-            ctx.fillText('Pressione P para sacar!', canvas.width * 3 / 4, 40);
+            const text = isTouchDevice ? 'Toque na tela para sacar!' : 'Pressione P para sacar!';
+            ctx.fillText(text, canvas.width * 3 / 4, 40);
         } else {
             ctx.fillStyle = CONFIG.colors.ai;
             ctx.shadowColor = CONFIG.colors.ai;
@@ -1027,90 +991,93 @@ canvas.addEventListener('mousemove', (e) => {
 
 // --- Touch Controls Event Listeners ---
 if (isTouchDevice) {
-    // Prevent default touch behaviors to avoid scrolling/zooming
-    document.addEventListener('touchmove', (e) => {
-        if (e.target.closest('.touch-arrow, .touch-serve-btn, .touch-zone')) {
+    function createTouchRipple(x, y) {
+        const ripple = document.createElement('div');
+        ripple.classList.add('touch-ripple');
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        document.body.appendChild(ripple);
+
+        // Remove after animation completes
+        setTimeout(() => {
+            ripple.remove();
+        }, 400);
+    }
+
+    function handleTouches(e) {
+        // Only prevent default on the canvas itself to allow UI clicks (Menu, Mute)
+        if (e.target === canvas) {
             e.preventDefault();
         }
-    }, { passive: false });
 
-    // Player 1 - Up
-    touchP1Up.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        input.up = true;
+        if (!state.running || state.coinFlipActive || state.paused) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const scaleY = canvas.height / rect.height;
+        const scaleX = canvas.width / rect.width;
+
         input.y = null;
-        touchP1Up.classList.add('active');
-    }, { passive: false });
-    touchP1Up.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        input.up = false;
-        touchP1Up.classList.remove('active');
-    }, { passive: false });
-    touchP1Up.addEventListener('touchcancel', () => {
-        input.up = false;
-        touchP1Up.classList.remove('active');
-    });
+        if (state.twoPlayer) input2.y = null;
 
-    // Player 1 - Down
-    touchP1Down.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        input.down = true;
-        input.y = null;
-        touchP1Down.classList.add('active');
-    }, { passive: false });
-    touchP1Down.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        input.down = false;
-        touchP1Down.classList.remove('active');
-    }, { passive: false });
-    touchP1Down.addEventListener('touchcancel', () => {
-        input.down = false;
-        touchP1Down.classList.remove('active');
-    });
+        for (let i = 0; i < e.touches.length; i++) {
+            const touch = e.touches[i];
 
-    // Player 2 - Up
-    touchP2Up.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        input2.up = true;
-        touchP2Up.classList.add('active');
-    }, { passive: false });
-    touchP2Up.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        input2.up = false;
-        touchP2Up.classList.remove('active');
-    }, { passive: false });
-    touchP2Up.addEventListener('touchcancel', () => {
-        input2.up = false;
-        touchP2Up.classList.remove('active');
-    });
+            // Map screen coordinates to canvas space
+            const touchX = (touch.clientX - rect.left) * scaleX;
+            const touchY = (touch.clientY - rect.top) * scaleY;
 
-    // Player 2 - Down
-    touchP2Down.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        input2.down = true;
-        touchP2Down.classList.add('active');
-    }, { passive: false });
-    touchP2Down.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        input2.down = false;
-        touchP2Down.classList.remove('active');
-    }, { passive: false });
-    touchP2Down.addEventListener('touchcancel', () => {
-        input2.down = false;
-        touchP2Down.classList.remove('active');
-    });
+            // If touching the game area
+            if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
 
-    // Serve Button
-    touchServeBtn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        if (state.serving) {
-            if (state.server === 'player') {
-                input.launch = true;
-            } else if (state.server === 'ai' && state.twoPlayer) {
-                input2.launch = true;
+                // Left half of screen -> Player 1
+                if (touchX < canvas.width / 2) {
+                    input.y = touchY;
+                }
+                // Right half of screen -> Player 2 (only in 2P mode)
+                else if (state.twoPlayer) {
+                    input2.y = touchY;
+                }
+            }
+        }
+    }
+
+    document.addEventListener('touchstart', (e) => {
+        // Ignore touches on UI overlays/buttons
+        if (e.target.closest('.overlay, .menu-btn, .mute-btn')) return;
+
+        handleTouches(e);
+
+        // Visual feedback & Tap to serve logic
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            const touch = e.changedTouches[i];
+            createTouchRipple(touch.clientX, touch.clientY);
+
+            if (state.serving) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const touchX = (touch.clientX - rect.left) * scaleX;
+
+                // Determine who served based on tap location (left/right side)
+                if (state.server === 'player' && touchX < canvas.width / 2) {
+                    input.launch = true;
+                } else if (state.server === 'ai' && state.twoPlayer && touchX >= canvas.width / 2) {
+                    input2.launch = true;
+                }
             }
         }
     }, { passive: false });
+
+    document.addEventListener('touchmove', handleTouches, { passive: false });
+
+    document.addEventListener('touchend', (e) => {
+        handleTouches(e);
+        // Reset launch flags just in case
+        input.launch = false;
+        input2.launch = false;
+    });
+
+    document.addEventListener('touchcancel', handleTouches);
 
     // Game-over tap to return to menu
     gameOverScreen.addEventListener('touchstart', (e) => {
