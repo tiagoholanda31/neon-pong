@@ -972,6 +972,18 @@ window.addEventListener('keyup', (e) => {
 // Intro Interaction
 introOverlay.addEventListener('click', () => {
     console.log("Intro clicked");
+
+    // Request fullscreen and landscape lock on mobile devices
+    if (isTouchDevice && document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().then(() => {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(e => console.log('Orientation lock failed:', e));
+            }
+        }).catch(err => {
+            console.log("Error attempting to enable fullscreen:", err);
+        });
+    }
+
     // Resume AudioContext if suspended
     const playMusic = () => {
         if (bgMusic) {
