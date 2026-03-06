@@ -681,8 +681,12 @@ function update() {
 
     // Player 2 / AI Movement
     if (state.twoPlayer) {
-        if (input2.up) ai.pos.y -= ai.speed;
-        if (input2.down) ai.pos.y += ai.speed;
+        if (input2.y !== null && !state.serving) {
+            ai.pos.y = input2.y - ai.size.y / 2;
+        } else {
+            if (input2.up) ai.pos.y -= ai.speed;
+            if (input2.down) ai.pos.y += ai.speed;
+        }
         ai.constrain();
     } else {
         if (!state.serving || state.server !== 'ai') {
