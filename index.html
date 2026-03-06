@@ -77,7 +77,8 @@
 
             <div id="gameOverScreen" class="overlay hidden">
                 <h2 id="winnerText">PLAYER WINS</h2>
-                <p class="game-over-hint">Pressione <span class="key">SPACE</span> ou toque na tela para voltar ao menu</p>
+                <p class="game-over-hint">Pressione <span class="key">SPACE</span> ou toque na tela para voltar ao menu
+                </p>
             </div>
         </div>
         <canvas id="gameCanvas"></canvas>
@@ -97,12 +98,6 @@
         </div>
         <button id="touchServeBtn" class="touch-serve-btn hidden">SAQUE ⚡</button>
 
-        <!-- Portrait Rotate Message -->
-        <div id="rotateMessage" class="rotate-message">
-            <div class="rotate-icon">📱🔄</div>
-            <p>Gire o celular para jogar</p>
-        </div>
-
         <!-- Intro Overlay -->
         <div id="introOverlay" class="intro-overlay">
             <h1 class="intro-title">NEON PONG</h1>
@@ -110,8 +105,14 @@
         </div>
     </div>
 
+    <!-- Portrait Rotate Message (Moved outside game-container) -->
+    <div id="rotateMessage" class="rotate-message">
+        <div class="rotate-icon">📱🔄</div>
+        <p>Gire o celular para jogar</p>
+    </div>
+
     <audio id="bgMusic" loop preload="auto">
-        <source src="sound/Midnight Neon Drive.mp3" type="audio/mpeg">
+        <source src="Sound/Midnight Neon Drive.mp3" type="audio/mpeg">
     </audio>
     <script src="main.js"></script>
 </body>
