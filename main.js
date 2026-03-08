@@ -337,7 +337,7 @@ const ball = new Ball();
 let particles = [];
 
 const input = { up: false, down: false, y: null, launch: false };
-const input2 = { up: false, down: false, launch: false };
+const input2 = { up: false, down: false, y: null, launch: false };
 
 // --- Touch Device Detection ---
 const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
